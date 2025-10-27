@@ -17,7 +17,7 @@ export class StringArrayName implements Name {
     private delimiter: string = DEFAULT_DELIMITER;
     private components: string[] = [];
 
-    // @methodtype constructor
+    // @methodtype initialization-method
     constructor(other: string[], delimiter?: string) {
         this.components = [...other];
         if (delimiter !== undefined) {
@@ -87,7 +87,7 @@ export class StringName implements Name {
     private delimiter: string = DEFAULT_DELIMITER;
     private name: string = '';
 
-    // @methodtype constructor
+    // @methodtype initialization-method
     constructor(other: string, delimiter?: string) {
         this.name = other;
         if (delimiter !== undefined) {
