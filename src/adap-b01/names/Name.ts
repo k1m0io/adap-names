@@ -1,19 +1,13 @@
 export const DEFAULT_DELIMITER: string = '.';
 export const ESCAPE_CHARACTER = '\\';
 
-export interface Name {
-    asString(delimiter?: string): string;
-    asDataString(): string;
-    getComponent(i: number): string;
-    setComponent(i: number, c: string): void;
-    getNoComponents(): number;
-    insert(i: number, c: string): void;
-    append(c: string): void;
-    remove(i: number): void;
-    getDelimiter(): string;
-}
-
-export class StringArrayName implements Name {
+/**
+ * A name is a sequence of string components separated by a delimiter character.
+ * Special characters within the string may need masking, if they are to appear verbatim.
+ * There are only two special characters, the delimiter character and the escape character.
+ * The escape character can't be set, the delimiter character can.
+ */
+export class Name {
     private delimiter: string = DEFAULT_DELIMITER;
     private components: string[] = [];
 
@@ -49,11 +43,17 @@ export class StringArrayName implements Name {
 
     // @methodtype get-method
     public getComponent(i: number): string {
+        if (i < 0 || i >= this.components.length) {
+            throw new Error("Index out of bounds");
+        }
         return this.components[i];
     }
 
     // @methodtype set-method
     public setComponent(i: number, c: string): void {
+        if (i < 0 || i >= this.components.length) {
+            throw new Error("Index out of bounds");
+        }
         this.components[i] = c;
     }
 
@@ -64,6 +64,9 @@ export class StringArrayName implements Name {
 
     // @methodtype command-method
     public insert(i: number, c: string): void {
+        if (i < 0 || i > this.components.length) {
+            throw new Error("Index out of bounds");
+        }
         this.components.splice(i, 0, c);
     }
 
@@ -74,126 +77,9 @@ export class StringArrayName implements Name {
 
     // @methodtype command-method
     public remove(i: number): void {
+        if (i < 0 || i >= this.components.length) {
+            throw new Error("Index out of bounds");
+        }
         this.components.splice(i, 1);
-    }
-
-    // @methodtype get-method
-    public getDelimiter(): string {
-        return this.delimiter;
-    }
-}
-
-export class StringName implements Name {
-    private delimiter: string = DEFAULT_DELIMITER;
-    private name: string = '';
-
-    // @methodtype initialization-method
-    constructor(other: string, delimiter?: string) {
-        this.name = other;
-        if (delimiter !== undefined) {
-            this.delimiter = delimiter;
-        }
-    }
-
-    // @methodtype conversion-method
-    public asString(delimiter: string = this.delimiter): string {
-        const components = this.getComponentsArray();
-        let result = '';
-        for(let i = 0; i < components.length; i++) {
-            const component = components[i];
-            let unmasked = '';
-            for (let j = 0; j < component.length; j++) {
-                const char = component[j];
-                if (char === ESCAPE_CHARACTER && j + 1 < component.length) {
-                    unmasked += component[j + 1];
-                    j++;
-                } else {
-                    unmasked += char;
-                }
-            }
-            result += unmasked;
-            if(i < components.length - 1) {
-                result += delimiter;
-            }
-        }
-        return result;
-    }
-
-    // @methodtype conversion-method
-    public asDataString(): string {
-        const components = this.getComponentsArray();
-        return components.join(DEFAULT_DELIMITER);
-    }
-
-    // @methodtype get-method
-    public getComponent(i: number): string {
-        const components = this.getComponentsArray();
-        return components[i];
-    }
-
-    // @methodtype set-method
-    public setComponent(i: number, c: string): void {
-        const components = this.getComponentsArray();
-        components[i] = c;
-        this.name = components.join(this.delimiter);
-    }
-
-    // @methodtype get-method
-    public getNoComponents(): number {
-        const arr = this.getComponentsArray();
-        return arr.length;
-    }
-
-    // @methodtype command-method
-    public insert(i: number, c: string): void {
-        const components = this.getComponentsArray();
-        components.splice(i, 0, c);
-        this.name = components.join(this.delimiter);
-    }
-
-    // @methodtype command-method
-    public append(c: string): void {
-        const components = this.getComponentsArray();
-        components.push(c);
-        this.name = components.join(this.delimiter);
-    }
-
-    // @methodtype command-method
-    public remove(i: number): void {
-        const components = this.getComponentsArray();
-        components.splice(i, 1);
-        this.name = components.join(this.delimiter);
-    }
-
-    // @methodtype get-method
-    public getDelimiter(): string {
-        return this.delimiter;
-    }
-
-    // @methodtype helper-method
-    private getComponentsArray(): string[] {
-        if (this.name === '') {
-            return [];
-        }
-        const components: string[] = [];
-        let current = '';
-        let i = 0;
-        while(i < this.name.length) {
-            const char = this.name[i];
-            if (char === ESCAPE_CHARACTER && i + 1 < this.name.length) {
-                current += char;
-                current += this.name[i + 1];
-                i += 2;
-            } else if (char === this.delimiter) {
-                components.push(current);
-                current = '';
-                i++;
-            } else {
-                current += char;
-                i++;
-            }
-        }
-        components.push(current);
-        return components;
     }
 }
