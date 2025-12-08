@@ -1,11 +1,10 @@
 import { IllegalArgumentException } from "../common/IllegalArgumentException";
 import { InvalidStateException } from "../common/InvalidStateException";
-
+import { ServiceFailureException } from "../common/ServiceFailureException";
 import { Name } from "../names/Name";
 import { Directory } from "./Directory";
 
 export class Node {
-
     protected baseName: string = "";
     protected parentNode: Directory;
 
@@ -57,12 +56,27 @@ export class Node {
      * @param bn basename of node being searched for
      */
     public findNodes(bn: string): Set<Node> {
-        const result: Set<Node> = new Set<Node>();
-        
-        if (this.getBaseName() === bn) {
-            result.add(this);
+        try {
+            const result: Set<Node> = new Set<Node>();
+            
+            // ERROR DETECTION: Check for invalid state
+            const baseName = this.getBaseName();
+            if (baseName === "") {
+                throw new InvalidStateException("Node has empty basename");
+            }
+            
+            // Check if this node matches
+            if (baseName === bn) {
+                result.add(this);
+            }
+            
+            return result;
+        } catch (ex) {
+            // At service boundary: wrap in ServiceFailureException
+            if (ex instanceof InvalidStateException) {
+                throw new ServiceFailureException("findNodes failed", ex);
+            }
+            throw ex;
         }
-        return result;
     }
-
 }
