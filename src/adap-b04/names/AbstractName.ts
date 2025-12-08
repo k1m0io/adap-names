@@ -84,7 +84,9 @@ export abstract class AbstractName implements Name {
         }).join(delimiter);
 
         // Postconditions
-        MethodFailedException.assertCondition(result !== null && result !== undefined, "asString result is null");
+        if (result === null || result === undefined) {
+            throw new MethodFailedException("asString result is null");
+        }
         
         this.assertClassInvariants();
         return result;
@@ -104,7 +106,9 @@ export abstract class AbstractName implements Name {
         const result = components.join(DEFAULT_DELIMITER);
         
         // Postconditions
-        MethodFailedException.assertCondition(result !== null && result !== undefined, "asDataString result is null");
+        if (result === null || result === undefined) {
+            throw new MethodFailedException("asDataString result is null");
+        }
         
         this.assertClassInvariants();
         return result;
@@ -168,10 +172,9 @@ export abstract class AbstractName implements Name {
         }
         
         // Postconditions
-        MethodFailedException.assertCondition(
-            this.getNoComponents() === oldNoComponents + otherNoComponents,
-            "concat did not add correct number of components"
-        );
+        if (this.getNoComponents() !== oldNoComponents + otherNoComponents) {
+            throw new MethodFailedException("concat did not add correct number of components");
+        }
         
         this.assertClassInvariants();
     }
