@@ -2,18 +2,15 @@ import { File } from "./File";
 import { Directory } from "./Directory";
 
 export class BuggyFile extends File {
-
     constructor(baseName: string, parent: Directory) {
         super(baseName, parent);
     }
 
     /**
-     * Fault injection for homework
-     * @returns base name, here always ""
+     * FIXED: Fault injection removed
+     * @returns base name correctly
      */
     protected doGetBaseName(): string {
-        this.baseName = "";
-        return super.doGetBaseName();
+        return this.baseName;  // FIXED: Don't set to ""
     }
-
 }
