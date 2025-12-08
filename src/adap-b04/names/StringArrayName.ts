@@ -33,7 +33,9 @@ export class StringArrayName extends AbstractName {
         const result = this.components[i];
         
         // Postconditions
-        MethodFailedException.assertCondition(result !== null && result !== undefined, "getComponent returned null");
+        if (result === null || result === undefined) {
+            throw new MethodFailedException("getComponent returned null");
+        }
         
         this.assertClassInvariants();
         return result;
@@ -48,7 +50,9 @@ export class StringArrayName extends AbstractName {
         this.components[i] = c;
         
         // Postconditions
-        MethodFailedException.assertCondition(this.components[i] === c, "setComponent failed to set component");
+        if (this.components[i] !== c) {
+            throw new MethodFailedException("setComponent failed to set component");
+        }
         
         this.assertClassInvariants();
     }
@@ -64,14 +68,12 @@ export class StringArrayName extends AbstractName {
         this.components.splice(i, 0, c);
         
         // Postconditions
-        MethodFailedException.assertCondition(
-            this.getNoComponents() === oldNoComponents + 1,
-            "insert did not increase number of components by 1"
-        );
-        MethodFailedException.assertCondition(
-            this.getComponent(i) === c,
-            "insert did not place component at correct position"
-        );
+        if (this.getNoComponents() !== oldNoComponents + 1) {
+            throw new MethodFailedException("insert did not increase number of components by 1");
+        }
+        if (this.getComponent(i) !== c) {
+            throw new MethodFailedException("insert did not place component at correct position");
+        }
         
         this.assertClassInvariants();
     }
@@ -86,14 +88,12 @@ export class StringArrayName extends AbstractName {
         this.components.push(c);
         
         // Postconditions
-        MethodFailedException.assertCondition(
-            this.getNoComponents() === oldNoComponents + 1,
-            "append did not increase number of components by 1"
-        );
-        MethodFailedException.assertCondition(
-            this.getComponent(this.getNoComponents() - 1) === c,
-            "append did not place component at end"
-        );
+        if (this.getNoComponents() !== oldNoComponents + 1) {
+            throw new MethodFailedException("append did not increase number of components by 1");
+        }
+        if (this.getComponent(this.getNoComponents() - 1) !== c) {
+            throw new MethodFailedException("append did not place component at end");
+        }
         
         this.assertClassInvariants();
     }
@@ -108,10 +108,9 @@ export class StringArrayName extends AbstractName {
         this.components.splice(i, 1);
         
         // Postconditions
-        MethodFailedException.assertCondition(
-            this.getNoComponents() === oldNoComponents - 1,
-            "remove did not decrease number of components by 1"
-        );
+        if (this.getNoComponents() !== oldNoComponents - 1) {
+            throw new MethodFailedException("remove did not decrease number of components by 1");
+        }
         
         this.assertClassInvariants();
     }
