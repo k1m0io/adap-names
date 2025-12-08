@@ -59,20 +59,10 @@ export class Node {
     public findNodes(bn: string): Set<Node> {
         const result: Set<Node> = new Set<Node>();
         
-        // Check if this node matches
         if (this.getBaseName() === bn) {
             result.add(this);
         }
-        
-        // If this is a Directory, search children recursively
-        if (this instanceof Directory) {
-            const dir = this as Directory;
-            for (const child of dir.childNodes) {
-                const childMatches = child.findNodes(bn);
-                childMatches.forEach(node => result.add(node));
-            }
-        }
         return result;
-}
+    }
 
 }
